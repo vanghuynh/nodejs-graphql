@@ -11,6 +11,7 @@ const multer = require('multer');
 const { graphqlHTTP } = require('express-graphql');
 const graphqlSchema = require('./graphql/schema');
 const graphqlResolver = require('./graphql/resolvers');
+const { error } = require('console');
 
 const app = express();
 
@@ -57,6 +58,16 @@ app.use(
   graphqlHTTP({
     schema: graphqlSchema,
     rootValue: graphqlResolver,
+    graphiql: true,
+    formatError: (error) => {
+      if (!error.originalError) {
+        return error;
+      }
+      const data = error.originalError.data;
+      const message = error.message || 'An error occurred.';
+      const code = error.originalError.code || 500;
+      return { message: message, status: code, data: data };
+    },
   })
 );
 
