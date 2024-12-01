@@ -11,7 +11,7 @@ const multer = require('multer');
 const { graphqlHTTP } = require('express-graphql');
 const graphqlSchema = require('./graphql/schema');
 const graphqlResolver = require('./graphql/resolvers');
-const { error } = require('console');
+const auth = require('./middleware/auth');
 
 const app = express();
 
@@ -56,6 +56,9 @@ app.use((req, res, next) => {
   next();
 });
 
+// validation for graphql
+app.use(auth);
+
 app.use(
   '/graphql',
   graphqlHTTP({
@@ -83,7 +86,7 @@ app.use((error, req, res, next) => {
 });
 
 mongoose
-  .connect(process.env.MONGODB_URL)
+  .connect(process.env.MONGODB_URL, { useUnifiedTopology: true })
   .then((result) => {
     app.listen(8080);
   })
