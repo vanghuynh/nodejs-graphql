@@ -65,7 +65,7 @@ module.exports = {
         userId: userId,
         email: user.email,
       },
-      'somesupersecretsecret',
+      process.env.JWT_SECRET_KEY,
       { expiresIn: '1h' }
     );
     return {
